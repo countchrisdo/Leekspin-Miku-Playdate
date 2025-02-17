@@ -1,0 +1,9 @@
+name=FFM Gup Run
+author=CountChrisdo
+description=Fishest Gup returns in this new adventure! Exclusively on the Playdate!
+bundleID=com.countchrisdo.ffmguprun
+version=1.0.1
+buildNumber=2
+contentWarning=Mmm Fish...
+imagePath=images/launcher/
+launchSoundPath=sound/launcher/fish.mp3
