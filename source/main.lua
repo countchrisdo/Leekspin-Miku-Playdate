@@ -5,13 +5,8 @@ import "CoreLibs/crank"
 -- localize playdate graphics for small performance gain + ease of use
 local pd = playdate
 local gfx = pd.graphics
--- localize playdate sound for small performance gain + ease of use
--- local gfs = pd.sound
--- local scoresfx = gfs.sampleplayer.new("sound/zap1")
--- local losssfx = gfs.sampleplayer.new("sound/zapThreeToneDown")
--- local startsfx = gfs.sampleplayer.new("sound/zapThreeToneUp")
 
--- Player
+-- Load
 -- -- X is right / Y is down | Screen is 400x240
 local imgX = 200
 local imgY = 120
@@ -23,6 +18,13 @@ local mainImgs = {mainImg1, mainImg2, mainImg3, mainImg4}
 local mainSprite = gfx.sprite.new(mainImgs[1])
 mainSprite:moveTo(imgX, imgY)
 mainSprite:add()
+
+-- Audio
+-- -- localize playdate sound for small performance gain + ease of use
+local gfs = pd.sound
+local music = gfs.sampleplayer.new("sound/mikuLoop")
+local playbackSpd = 0
+music:play(0,playbackSpd) -- loop forever, 0% playback speed
 
 -- Game State
 local crankSpd = 0
@@ -41,6 +43,7 @@ function pd.update()
         currentImgIdx = currentImgIdx + 1
         if currentImgIdx > #mainImgs then
             currentImgIdx = 1
+            -- music:setRate(playbackSpd)?
         end
         mainSprite:setImage(mainImgs[currentImgIdx])
 
@@ -49,9 +52,11 @@ function pd.update()
         currentImgIdx = currentImgIdx - 1
         if currentImgIdx < 1 then
             currentImgIdx = #mainImgs
+            -- music:setRate(playbackSpd)?
         end
         mainSprite:setImage(mainImgs[currentImgIdx])
     end
 
-    -- gfx.drawTextAligned("crankSpd: " .. crankSpd, 390, 10, kTextAlignment.right)
+    -- crankSpd = crankTicks * TPR 
+    -- gfx.drawTextAligned("crankSpd: " .. crankSpd, 370, 10, kTextAlignment.right)
 end
