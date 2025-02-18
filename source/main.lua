@@ -24,6 +24,8 @@ mainSprite:add()
 local gfs = pd.sound
 local music = gfs.sampleplayer.new("sound/mikuLoop")
 local playbackSpd = 0
+local maxPlaybackSpd = 3
+local scalingFactor = 90 -- Adjust to change sensitivity of crank
 music:play(0,playbackSpd) -- loop forever, 0% playback speed
 
 -- Game State
@@ -36,27 +38,39 @@ local currentImgIdx = 1
 function pd.update()
     gfx.sprite.update()
 
-    local crankTicks = playdate.getCrankTicks(TPR)
+    local crankChange, acceleratedChange = pd.getCrankChange()
 
+    -- Calculate playback speed based on crank change
+    print("Accelerated Change: " .. acceleratedChange)
+    playbackSpd = acceleratedChange / scalingFactor * maxPlaybackSpd
+    print("Playback Speed: " .. playbackSpd)
+
+    -- Ensure playback speed is within bounds
+    if playbackSpd > maxPlaybackSpd then
+        playbackSpd = maxPlaybackSpd
+    elseif playbackSpd < -maxPlaybackSpd then
+        playbackSpd = -maxPlaybackSpd
+    end
+
+    music:setRate(playbackSpd)
+
+    local crankTicks = playdate.getCrankTicks(TPR)
+    print("Crank Ticks: " .. crankTicks)
+
+    -- Change image based on crank ticksPerRevolution
     if crankTicks == 1 then
         print("Forward tick")
         currentImgIdx = currentImgIdx + 1
         if currentImgIdx > #mainImgs then
             currentImgIdx = 1
-            -- music:setRate(playbackSpd)?
         end
         mainSprite:setImage(mainImgs[currentImgIdx])
-
     elseif crankTicks == -1 then
-        print("Backward tick")
+        print("Backwards tick")
         currentImgIdx = currentImgIdx - 1
         if currentImgIdx < 1 then
             currentImgIdx = #mainImgs
-            -- music:setRate(playbackSpd)?
         end
         mainSprite:setImage(mainImgs[currentImgIdx])
     end
-
-    -- crankSpd = crankTicks * TPR 
-    -- gfx.drawTextAligned("crankSpd: " .. crankSpd, 370, 10, kTextAlignment.right)
 end
