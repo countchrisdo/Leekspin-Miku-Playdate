@@ -1,9 +1,8 @@
-name=FFM Gup Run
+name=Leekspin Miku
 author=CountChrisdo
-description=Fishest Gup returns in this new adventure! Exclusively on the Playdate!
-bundleID=com.countchrisdo.ffmguprun
-version=1.0.1
-buildNumber=2
-contentWarning=Mmm Fish...
+description=Leekspin Miku Playdate brings the old-time popular internet flash animation (Leekspin) to your Playdate.
+bundleID=com.countchrisdo.leekspinmiku
+version=1.0.0
+buildNumber=1
 imagePath=images/launcher/
 launchSoundPath=sound/launcher/fish.mp3
