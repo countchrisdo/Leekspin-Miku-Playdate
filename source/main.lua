@@ -2,6 +2,7 @@
 import "CoreLibs/graphics"
 import "CoreLibs/sprites"
 import "CoreLibs/crank"
+import "CoreLibs/ui"
 
 local pd = playdate
 -- Graphics
@@ -9,6 +10,7 @@ local pd = playdate
 local gfx = pd.graphics
 local maxWidth = 400
 local maxHeight = 240
+
 
 -- Load
 -- -- X is right / Y is down | Screen is 400x240
@@ -22,6 +24,7 @@ local mainImgs = {mainImg1, mainImg2, mainImg3, mainImg4}
 local mainSprite = gfx.sprite.new(mainImgs[1])
 mainSprite:moveTo(imgX, imgY)
 mainSprite:add()
+
 
 -- Audio
 -- -- localize pd sound for small performance gain + ease of use
@@ -103,7 +106,7 @@ end
 local textX = 0
 local textSpeed = 1
 local textDirection = -1
-local menuText = "Miku Leekspin - Developed by: @CountChrisdo - Use the crank!"
+local menuText = "-  Hatsune Miku Leekspin - Developed by: @CountChrisdo - Use the crank and find the beat!   -"
 local menuTextWidth = gfx.getTextSize(menuText)
 
 local function displayMenu()
@@ -118,8 +121,10 @@ local function displayMenu()
         if textX < maxWidth - menuTextWidth or textX > 0 then
             textDirection = textDirection * -1
         end
-
         gfx.drawTextAligned(menuText, textX, 220, kTextAlignment.left)
+        if pd.isCrankDocked() then
+            pd.ui.crankIndicator:draw(0,-25)
+        end
     end
 end
 
