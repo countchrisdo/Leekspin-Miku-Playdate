@@ -27,36 +27,52 @@ local playbackSpd = 0
 local targetPlaybackSpd = 1
 local minPlaybackSpd = -3
 local maxPlaybackSpd = 3
-local scalingFactor = 360 -- Adjust to change sensitivity of crank. Higher = less sensitive
 music:play(0,playbackSpd) -- loop forever, 0% playback speed
 
 -- Game State
 local crankSpd = 0
-local TPR = 6 -- Ticks per Revolution
+local targetCrankSpd = 25 -- DPF: Degrees Per Frame
+local TPR = 6 -- TPR: Ticks per Revolution
 local currentImgIdx = 1
+local bufferedFrames = 15
+local crankBuffer = {}
+
+-- Functions
+local function getAverageSpd(newSpd)
+    table.insert(crankBuffer, newSpd)
+    if #crankBuffer > bufferedFrames then
+        table.remove(crankBuffer, 1)
+    end
+
+    local sum = 0
+    for i = 1, #crankBuffer do
+        sum = sum + crankBuffer[i]
+    end
+    return sum / #crankBuffer
+end
 
 -- Update
--- -- Runs evert frame / PD runs 30fps
+-- -- Runs every frame / PD runs 30fps
 function pd.update()
     gfx.sprite.update()
 
     local crankChange, acceleratedChange = pd.getCrankChange()
+    -- maximum crankChange is 72 degrees per frame
+    crankSpd = getAverageSpd(crankChange)
 
-    -- set playback speed based on crankSpeed
-    print("Accelerated Change: " .. acceleratedChange)
-    crankSpd = acceleratedChange * 1 -- *1 stops nil warning
-    print("Crank Speed: " .. crankSpd)
-    playbackSpd = crankSpd / scalingFactor * 3
+    -- set playback speed based on ratio of crankSpd to targetCrankSpd
+    print("Crankspd: " .. crankSpd)
+    print("Target Crank Spd: " .. targetCrankSpd)
+    playbackSpd = crankSpd / targetCrankSpd 
     print("Initial Playback Speed: " .. playbackSpd)
 
-    -- assist for maintaining targetPlaybackSpd
-    if playbackSpd > targetPlaybackSpd then
-        playbackSpd = playbackSpd - 0.1
-    elseif playbackSpd > 0 and playbackSpd < targetPlaybackSpd then
-        playbackSpd = playbackSpd + 0.1
+    -- Assist keeping playbackSpd at targetPlaybackSpd
+    if math.abs(playbackSpd - targetPlaybackSpd) <= 0.2 then
+        print("Playback Speed is close to target, setting to target")
+        playbackSpd = targetPlaybackSpd
     end
 
-    -- Ensure playback speed is within bounds
+    -- Clamp pbSpd
     if playbackSpd > maxPlaybackSpd then
         playbackSpd = maxPlaybackSpd
         print("Max Playback Speed Reached")

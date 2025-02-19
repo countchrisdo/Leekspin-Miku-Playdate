@@ -9,6 +9,12 @@
 - music:play(x,y) to play a sound. x is loop, y is the playback rate
 - music:stop() to stop a sound
 
+The playback speed is computed as
+pbSpd = crankSpd / targetSpd 
+so that when the measured speed equals the target, the rate is 1. When faster 1+x and when slower 1-x
+
+so that when the measured speed equals the target, the rate is 1.
+
 
 # Sources
 - https://www.youtube.com/watch?v=UZ04rk3lLqU
@@ -25,18 +31,3 @@ playbackSpd = acceleratedChange / 360 * maxPlaybackSpd
 Playback Speed: 0.2642824
 
 --
-cranked = function(change, acceleratedChange)
-			local framerate = self.videorama.video:getFrameRate()
-			local tick = playdate.getCrankTicks(framerate)
-			if self.videorama:isPlaying() then
-				if tick == 1 then
-					self.videorama:increaseRate()
-				elseif tick == -1 then
-					self.videorama:decreaseRate()
-				end
-				self:setRateText()
-			else
-				local n = self.videorama.lastFrame + tick
-				self.videorama:setFrame(n)
-			end
-		end,
