@@ -20,18 +20,18 @@ mainSprite:moveTo(imgX, imgY)
 mainSprite:add()
 
 -- Audio
--- -- localize playdate sound for small performance gain + ease of use
+-- -- localize pd sound for small performance gain + ease of use
 local gfs = pd.sound
 local music = gfs.sampleplayer.new("sound/mikuLoop")
 local playbackSpd = 0
 local targetPlaybackSpd = 1
 local minPlaybackSpd = -3
 local maxPlaybackSpd = 3
-music:play(0,playbackSpd) -- loop forever, 0% playback speed
+music:play(0,playbackSpd) -- (loop forever, 0% pbSpeed)
 
 -- Game State
-local crankSpd = 0
-local targetCrankSpd = 25 -- DPF: Degrees Per Frame
+local crankSpd = 0 -- DPF: Degrees Per Frame
+local targetCrankSpd = 25
 local TPR = 6 -- TPR: Ticks per Revolution
 local currentImgIdx = 1
 local bufferedFrames = 15
@@ -51,20 +51,14 @@ local function getAverageSpd(newSpd)
     return sum / #crankBuffer
 end
 
--- Update
--- -- Runs every frame / PD runs 30fps
-function pd.update()
-    gfx.sprite.update()
+local function playbackAt(newerSpd)
+    -- set pbSpd based on ratio of crankSpd to targetCrankSpd
+    playbackSpd = crankSpd / targetCrankSpd
 
-    local crankChange, acceleratedChange = pd.getCrankChange()
-    -- maximum crankChange is 72 degrees per frame
-    crankSpd = getAverageSpd(crankChange)
-
-    -- set playback speed based on ratio of crankSpd to targetCrankSpd
-    print("Crankspd: " .. crankSpd)
-    print("Target Crank Spd: " .. targetCrankSpd)
-    playbackSpd = crankSpd / targetCrankSpd 
-    print("Initial Playback Speed: " .. playbackSpd)
+    -- Debug statements
+    -- print("Crankspd: " .. crankSpd)
+    -- print("Target Crank Spd: " .. targetCrankSpd)
+    -- print("Initial Playback Speed: " .. playbackSpd)
 
     -- Assist keeping playbackSpd at targetPlaybackSpd
     if math.abs(playbackSpd - targetPlaybackSpd) <= 0.2 then
@@ -75,31 +69,57 @@ function pd.update()
     -- Clamp pbSpd
     if playbackSpd > maxPlaybackSpd then
         playbackSpd = maxPlaybackSpd
-        print("Max Playback Speed Reached")
     elseif playbackSpd < -maxPlaybackSpd then
         playbackSpd = -maxPlaybackSpd
     end
 
     print("Final Playback Speed: " .. playbackSpd)
     music:setRate(playbackSpd)
+end
 
-    local crankTicks = playdate.getCrankTicks(TPR)
-    print("Crank Ticks: " .. crankTicks)
-
+local function animateAt(crankTicks)
     -- Change image based on crank ticksPerRevolution
     if crankTicks == 1 then
-        print("Forward tick")
+        -- print("Forward tick")
         currentImgIdx = currentImgIdx + 1
         if currentImgIdx > #mainImgs then
             currentImgIdx = 1
         end
         mainSprite:setImage(mainImgs[currentImgIdx])
     elseif crankTicks == -1 then
-        print("Backwards tick")
+        -- print("Backwards tick")
         currentImgIdx = currentImgIdx - 1
         if currentImgIdx < 1 then
             currentImgIdx = #mainImgs
         end
         mainSprite:setImage(mainImgs[currentImgIdx])
     end
+end
+
+local function displayMenu()
+    -- if pd.buttonIsPressed() then
+    --     print("A pressed")
+    -- end
+end
+
+
+
+-- Update
+-- -- Runs every frame / PD runs 30fps
+function pd.update()
+    gfx.sprite.update()
+
+    -- play music
+    local crankChange, acceleratedChange = pd.getCrankChange()
+    crankSpd = getAverageSpd(crankChange)
+    playbackAt(crankSpd)
+    
+    -- animate image
+    local crankTicks = playdate.getCrankTicks(TPR)
+    print("Crank Ticks: " .. crankTicks)
+    animateAt(crankTicks)
+
+    -- Display Menu
+    displayMenu()
+
 end
