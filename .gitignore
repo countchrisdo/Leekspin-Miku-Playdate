@@ -2,3 +2,5 @@
 builds/
 # ignore macOS system files
 .DS_Store
+# git stuff
+.github/

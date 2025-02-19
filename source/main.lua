@@ -2,9 +2,13 @@
 import "CoreLibs/graphics"
 import "CoreLibs/sprites"
 import "CoreLibs/crank"
--- localize playdate graphics for small performance gain + ease of use
+
 local pd = playdate
+-- Graphics
+-- localize playdate graphics for small performance gain + ease of use
 local gfx = pd.graphics
+local maxWidth = 400
+local maxHeight = 240
 
 -- Load
 -- -- X is right / Y is down | Screen is 400x240
@@ -96,12 +100,28 @@ local function animateAt(crankTicks)
     end
 end
 
-local function displayMenu()
-    -- if pd.buttonIsPressed() then
-    --     print("A pressed")
-    -- end
-end
+local textX = 0
+local textSpeed = 1
+local textDirection = -1
+local menuText = "Miku Leekspin - Developed by: @CountChrisdo - Use the crank!"
+local menuTextWidth = gfx.getTextSize(menuText)
 
+local function displayMenu()
+    local debugval = true
+    if pd.buttonIsPressed(pd.kButtonA) or pd.buttonIsPressed(pd.kButtonB) or debugval == true then
+        gfx.setColor(gfx.kColorWhite)
+        -- screensize is 400x240
+        gfx.fillRect(0, 215, maxWidth, 25) -- GUI Box
+        gfx.setColor(gfx.kColorBlack)
+        -- update text position
+        textX = textX + (textSpeed * textDirection)
+        if textX < maxWidth - menuTextWidth or textX > 0 then
+            textDirection = textDirection * -1
+        end
+
+        gfx.drawTextAligned(menuText, textX, 220, kTextAlignment.left)
+    end
+end
 
 
 -- Update
