@@ -24,8 +24,10 @@ mainSprite:add()
 local gfs = pd.sound
 local music = gfs.sampleplayer.new("sound/mikuLoop")
 local playbackSpd = 0
+local targetPlaybackSpd = 1
+local minPlaybackSpd = -3
 local maxPlaybackSpd = 3
-local scalingFactor = 90 -- Adjust to change sensitivity of crank
+local scalingFactor = 360 -- Adjust to change sensitivity of crank. Higher = less sensitive
 music:play(0,playbackSpd) -- loop forever, 0% playback speed
 
 -- Game State
@@ -40,18 +42,29 @@ function pd.update()
 
     local crankChange, acceleratedChange = pd.getCrankChange()
 
-    -- Calculate playback speed based on crank change
+    -- set playback speed based on crankSpeed
     print("Accelerated Change: " .. acceleratedChange)
-    playbackSpd = acceleratedChange / scalingFactor * maxPlaybackSpd
-    print("Playback Speed: " .. playbackSpd)
+    crankSpd = acceleratedChange * 1 -- *1 stops nil warning
+    print("Crank Speed: " .. crankSpd)
+    playbackSpd = crankSpd / scalingFactor * 3
+    print("Initial Playback Speed: " .. playbackSpd)
+
+    -- assist for maintaining targetPlaybackSpd
+    if playbackSpd > targetPlaybackSpd then
+        playbackSpd = playbackSpd - 0.1
+    elseif playbackSpd > 0 and playbackSpd < targetPlaybackSpd then
+        playbackSpd = playbackSpd + 0.1
+    end
 
     -- Ensure playback speed is within bounds
     if playbackSpd > maxPlaybackSpd then
         playbackSpd = maxPlaybackSpd
+        print("Max Playback Speed Reached")
     elseif playbackSpd < -maxPlaybackSpd then
         playbackSpd = -maxPlaybackSpd
     end
 
+    print("Final Playback Speed: " .. playbackSpd)
     music:setRate(playbackSpd)
 
     local crankTicks = playdate.getCrankTicks(TPR)

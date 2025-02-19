@@ -23,3 +23,20 @@ Max Playback Speed: 3
 playbackSpd = acceleratedChange / 360 * maxPlaybackSpd
 
 Playback Speed: 0.2642824
+
+--
+cranked = function(change, acceleratedChange)
+			local framerate = self.videorama.video:getFrameRate()
+			local tick = playdate.getCrankTicks(framerate)
+			if self.videorama:isPlaying() then
+				if tick == 1 then
+					self.videorama:increaseRate()
+				elseif tick == -1 then
+					self.videorama:decreaseRate()
+				end
+				self:setRateText()
+			else
+				local n = self.videorama.lastFrame + tick
+				self.videorama:setFrame(n)
+			end
+		end,
