@@ -106,12 +106,11 @@ end
 local textX = 0
 local textSpeed = 1
 local textDirection = -1
-local menuText = "-  Hatsune Miku Leekspin - Developed by: @CountChrisdo - Use the crank and find the beat!   -"
+local menuText = "-  MikuSpin - Developed by: @CountChrisdo - Use the crank and feel the beat!   -"
 local menuTextWidth = gfx.getTextSize(menuText)
 
 local function displayMenu()
-    local debugval = true
-    if pd.buttonIsPressed(pd.kButtonA) or pd.buttonIsPressed(pd.kButtonB) or debugval == true then
+    if pd.buttonIsPressed(pd.kButtonA) or pd.buttonIsPressed(pd.kButtonB) then
         gfx.setColor(gfx.kColorWhite)
         -- screensize is 400x240
         gfx.fillRect(0, 215, maxWidth, 25) -- GUI Box

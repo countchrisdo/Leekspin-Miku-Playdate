@@ -1,7 +1,7 @@
-name=Leekspin Miku
+name=MikuSpin Playdate
 author=CountChrisdo
-description=Leekspin Miku Playdate brings the old-time popular internet flash animation (Leekspin) to your Playdate.
-bundleID=com.countchrisdo.leekspinmiku
-version=1.0.1
-buildNumber=2
+description=MikuSpin Playdate brings the old-time popular internet flash animation Leekspin-Loituma Girl to your Playdate.
+bundleID=com.countchrisdo.mikuspin
+version=1.0.0
+buildNumber=1
 imagePath=images/launcher/
