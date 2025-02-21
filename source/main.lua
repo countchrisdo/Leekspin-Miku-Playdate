@@ -38,7 +38,7 @@ music:play(0,playbackSpd) -- (loop forever, 0% pbSpeed)
 
 -- Game State
 local crankSpd = 0 -- DPF: Degrees Per Frame
-local targetCrankSpd = 25
+local targetCrankSpd = 23
 local TPR = 6 -- TPR: Ticks per Revolution
 local currentImgIdx = 1
 local bufferedFrames = 15
@@ -72,7 +72,7 @@ local function playbackAt(newerSpd)
     print("Initial Playback Speed: " .. playbackSpd)
 
     -- Assist keeping playbackSpd at targetPlaybackSpd
-    if math.abs(playbackSpd - targetPlaybackSpd) <= 0.2 then
+    if math.abs(playbackSpd - targetPlaybackSpd) <= 0.1 then
         print("Playback Speed is close to target, setting to target")
         playbackSpd = targetPlaybackSpd
     end
