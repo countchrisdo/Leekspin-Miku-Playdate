@@ -60,12 +60,16 @@ end
 
 local function playbackAt(newerSpd)
     -- set pbSpd based on ratio of crankSpd to targetCrankSpd
-    playbackSpd = crankSpd / targetCrankSpd
+    if crankSpd < 0 then
+        playbackSpd = crankSpd / targetCrankSpd
+    else
+        playbackSpd = crankSpd / targetCrankSpd
+    end
 
     -- Debug statements
-    -- print("Crankspd: " .. crankSpd)
-    -- print("Target Crank Spd: " .. targetCrankSpd)
-    -- print("Initial Playback Speed: " .. playbackSpd)
+    print("Crankspd: " .. crankSpd)
+    print("Target Crank Spd: " .. targetCrankSpd)
+    print("Initial Playback Speed: " .. playbackSpd)
 
     -- Assist keeping playbackSpd at targetPlaybackSpd
     if math.abs(playbackSpd - targetPlaybackSpd) <= 0.2 then
@@ -76,8 +80,8 @@ local function playbackAt(newerSpd)
     -- Clamp pbSpd
     if playbackSpd > maxPlaybackSpd then
         playbackSpd = maxPlaybackSpd
-    elseif playbackSpd < -maxPlaybackSpd then
-        playbackSpd = -maxPlaybackSpd
+    elseif playbackSpd < minPlaybackSpd then
+        playbackSpd = minPlaybackSpd
     end
 
     print("Final Playback Speed: " .. playbackSpd)
